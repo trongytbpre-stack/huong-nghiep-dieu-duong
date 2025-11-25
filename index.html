@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Mentor - Hướng nghiệp Điều Dưỡng</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body class="bg-slate-50 min-h-screen p-3 sm:p-6 font-sans text-slate-800">
+
+    <div class="max-w-5xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden border border-slate-100">
+
+        <!-- Hero Header with Gradient -->
+        <header class="bg-gradient-to-r from-teal-700 to-emerald-600 p-8 text-white relative overflow-hidden">
+            <!-- Decorative Circles -->
+            <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white opacity-10"></div>
+            <div class="absolute bottom-0 left-0 -ml-10 -mb-10 w-40 h-40 rounded-full bg-white opacity-10"></div>
+
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                            <i data-lucide="stethoscope" class="w-8 h-8 text-white"></i>
+                        </div>
+                        <h1 class="header-font text-2xl md:text-3xl font-bold tracking-tight">Hướng nghiệp & Tư vấn chọn nghề</h1>
+                    </div>
+                    <!-- <div class="flex items-center gap-2">
+                        <button onclick="resetApiKey()" class="text-xs font-medium bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full backdrop-blur-sm transition" title="Xóa Key đã lưu để nhập lại">
+                            🔑 Đổi Key
+                        </button>
+                        <div class="text-sm font-medium bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
+                            Phiên bản 2.4 (Auto Key)
+                        </div>
+                    </div> -->
+                </div>
+                
+                <p id="step-name" class="text-lg md:text-xl text-emerald-50 font-medium mb-6">Khởi tạo hồ sơ chuyên môn</p>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="flex-grow">
+                        <div class="progress-container bg-emerald-800/30">
+                            <div id="progress-bar" class="progress-bar bg-white"></div>
+                        </div>
+                    </div>
+                    <span id="step-counter" class="text-sm font-bold whitespace-nowrap">1 / 3</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-6 md:p-10">
+            <!-- Step 1: Nhập Dữ liệu & Chọn Chuyên Ngành -->
+            <div id="step-1" class="step-page active">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-4">
+                        <span class="font-bold text-lg">1</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800">Thông tin & Định hướng</h2>
+                </div>
+
+                <!-- Chọn Chuyên Ngành (Visual Updated) -->
+                <div class="mb-8 bg-gradient-to-br from-slate-50 to-blue-50 p-6 rounded-2xl border border-blue-100 shadow-sm">
+                    <label for="career-path-select" class="block text-lg font-semibold text-slate-800 mb-3 flex items-center">
+                        <i data-lucide="compass" class="w-5 h-5 mr-2 text-blue-600"></i>
+                        Chọn Chuyên Ngành Mục tiêu
+                    </label>
+                    <div class="relative">
+                        <select id="career-path-select" class="w-full p-4 pl-5 border border-blue-200 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white appearance-none cursor-pointer text-slate-700 font-medium text-base">
+                            <option value="">-- Chọn lĩnh vực bạn muốn phát triển --</option>
+                            <optgroup label="🏥 Lâm sàng (Clinical)">
+                                <option value="Điều dưỡng Lâm sàng - Nội/Ngoại khoa">Nội/Ngoại khoa</option>
+                                <option value="Điều dưỡng Lâm sàng - Hồi sức (ICU/CCU)">ICU - Hồi sức Cấp cứu</option>
+                                <option value="Điều dưỡng Lâm sàng - Phòng mổ/Gây mê">Phòng mổ - Gây mê</option>
+                            </optgroup>
+                            <optgroup label="👶 Chuyên khoa Đặc biệt">
+                                <option value="Điều dưỡng Chuyên khoa Phẫu thuật - Nhi">Nhi khoa</option>
+                                <option value="Điều dưỡng Chuyên khoa Phẫu thuật - Tâm thần">Sức khỏe Tâm thần</option>
+                                <option value="Điều dưỡng Chuyên khoa Phẫu thuật - Sản">Sản phụ khoa</option>
+                            </optgroup>
+                            <optgroup label="🌿 Y tế Cộng đồng">
+                                <option value="Điều dưỡng Y tế Cộng đồng - Trạm Y tế/Tiêm chủng">Trạm Y tế / Tiêm chủng</option>
+                                <option value="Điều dưỡng Y tế Cộng đồng - Tư vấn/GDSK">Tư vấn & Giáo dục Sức khỏe</option>
+                            </optgroup>
+                            <optgroup label="🏠 Chăm sóc tại nhà">
+                                <option value="Điều dưỡng CS tại nhà - Chăm sóc người cao tuổi">Chăm sóc người cao tuổi (Home Care)</option>
+                                <option value="Điều dưỡng CS tại nhà - Phục hồi sau mổ">Phục hồi chức năng</option>
+                            </optgroup>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-blue-500">
+                            <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Buttons -->
+                <div class="flex p-1 space-x-2 bg-slate-100 rounded-xl w-full md:w-fit mb-6">
+                    <button class="tab-button flex-1 md:w-48 active" onclick="showTab('manual-input', this)">
+                        <i data-lucide="user-pen" class="w-4 h-4 mr-2"></i> Nhập Form
+                    </button>
+                    <button class="tab-button flex-1 md:w-48" onclick="showTab('cv-input-area', this)">
+                        <i data-lucide="file-input" class="w-4 h-4 mr-2"></i> Dán CV có sẵn
+                    </button>
+                </div>
+
+                <!-- Tab Content: Manual Input -->
+                <div id="manual-input" class="tab-content space-y-6 active">
+                    <!-- Thông tin cơ bản -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="group">
+                            <label class="block text-sm font-medium text-slate-600 mb-1 flex items-center"><i data-lucide="user" class="w-4 h-4 mr-1"></i> Họ và Tên</label>
+                            <input type="text" id="name-input" placeholder="Nguyễn Văn A" class="form-input w-full p-3 border border-slate-300 rounded-lg">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1 flex items-center"><i data-lucide="calendar" class="w-4 h-4 mr-1"></i> Tuổi</label>
+                                <input type="number" id="age-input" placeholder="25" class="form-input w-full p-3 border border-slate-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1 flex items-center"><i data-lucide="users" class="w-4 h-4 mr-1"></i> Giới tính</label>
+                                <select id="gender-input" class="form-input w-full p-3 border border-slate-300 rounded-lg">
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1 flex items-center"><i data-lucide="graduation-cap" class="w-4 h-4 mr-1"></i> Trình độ cao nhất</label>
+                            <select id="degree-input" class="form-input w-full p-3 border border-slate-300 rounded-lg">
+                                <option>Cao đẳng</option>
+                                <option>Cử nhân</option>
+                                <option>Thạc sĩ</option>
+                                <option>Chuyên khoa I/II</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1 flex items-center"><i data-lucide="briefcase" class="w-4 h-4 mr-1"></i> Kinh nghiệm (Năm)</label>
+                            <input type="number" id="experience-input" value="0" min="0" class="form-input w-full p-3 border border-slate-300 rounded-lg">
+                        </div>
+                    </div>
+
+                    <!-- Chứng chỉ -->
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                        <label class="block text-base font-semibold text-slate-700 mb-3 flex items-center">
+                            <i data-lucide="award" class="w-5 h-5 mr-2 text-emerald-600"></i> Chứng chỉ & Bằng cấp khác
+                        </label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" name="certificate" value="CCHN KCB (Điều dưỡng)" class="mr-3 rounded text-emerald-600 focus:ring-emerald-500 w-5 h-5"> CCHN KCB (Điều dưỡng)</label>
+                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" name="certificate" value="Ngoại ngữ (Anh/Nhật/Đức)" class="mr-3 rounded text-emerald-600 focus:ring-emerald-500 w-5 h-5"> Ngoại ngữ (IELTS/TOEIC...)</label>
+                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" name="certificate" value="Tin học văn phòng" class="mr-3 rounded text-emerald-600 focus:ring-emerald-500 w-5 h-5"> Tin học văn phòng</label>
+                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" name="certificate" value="Kiểm soát nhiễm khuẩn" class="mr-3 rounded text-emerald-600 focus:ring-emerald-500 w-5 h-5"> Kiểm soát nhiễm khuẩn</label>
+                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" name="certificate" value="An toàn tiêm chủng" class="mr-3 rounded text-emerald-600 focus:ring-emerald-500 w-5 h-5"> An toàn tiêm chủng</label>
+                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" name="certificate" value="Hồi sức cấp cứu (ICU)" class="mr-3 rounded text-emerald-600 focus:ring-emerald-500 w-5 h-5"> Hồi sức cấp cứu (ICU)</label>
+                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" name="certificate" value="Sư phạm Y học" class="mr-3 rounded text-emerald-600 focus:ring-emerald-500 w-5 h-5"> Sư phạm Y học</label>
+                            <label class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" name="certificate" value="Chăm sóc vết thương" class="mr-3 rounded text-emerald-600 focus:ring-emerald-500 w-5 h-5"> Chăm sóc vết thương</label>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-slate-100">
+                            <input type="text" id="cert-other-input" placeholder="+ Nhập chứng chỉ khác (cách nhau dấu phẩy)" class="w-full p-2 text-sm border border-slate-300 rounded-lg bg-slate-50 focus:bg-white transition">
+                        </div>
+                    </div>
+
+                    <!-- Tóm tắt bản thân -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1 flex items-center"><i data-lucide="fingerprint" class="w-4 h-4 mr-1"></i> Phong cách làm việc</label>
+                        <select id="summary-select" class="form-input w-full p-3 border border-slate-300 rounded-lg mb-2" onchange="toggleCustomSummary()">
+                            <option value="dynamic">🏃 Người Năng động (Thích giao tiếp, Quản lý, Cộng đồng)</option>
+                            <option value="cautious">🔬 Người Cẩn trọng (Chi tiết, ICU, Phòng mổ, Kỹ thuật cao)</option>
+                            <option value="stable">🤝 Người Ổn định (Kiên nhẫn, Chăm sóc dài hạn, Phục hồi)</option>
+                            <option value="custom">✍️ Tự viết mô tả bản thân...</option>
+                        </select>
+                        <textarea id="summary-input" rows="3" class="w-full p-3 border border-slate-300 rounded-lg hidden" placeholder="Mô tả ngắn gọn về bản thân và mục tiêu nghề nghiệp..."></textarea>
+                        <p id="summary-placeholder" class="text-sm text-emerald-600 italic bg-emerald-50 p-2 rounded border border-emerald-100">
+                            "Tôi là người năng động..." (Chọn danh mục trên để AI tự điền)
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Lương & Môi trường -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1 flex items-center"><i data-lucide="banknote" class="w-4 h-4 mr-1"></i> Mức lương mong muốn</label>
+                                <div class="flex">
+                                    <select id="salary-preset" class="form-input flex-grow p-3 border border-slate-300 rounded-l-lg bg-white">
+                                        <option value="8000000">8,000,000 VND</option>
+                                        <option value="10000000">10,000,000 VND</option>
+                                        <option value="12000000">12,000,000 VND</option>
+                                        <option value="15000000">15,000,000 VND</option>
+                                        <option value="20000000">20,000,000+ VND</option>
+                                        <option value="other">Số khác...</option>
+                                    </select>
+                                    <input type="number" id="salary-custom-input" placeholder="Nhập số..." class="w-24 p-3 border-t border-r border-slate-300 rounded-r-lg hidden">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1 flex items-center"><i data-lucide="building-2" class="w-4 h-4 mr-1"></i> Môi trường ưu tiên</label>
+                                <select id="environment-input" class="form-input w-full p-3 border border-slate-300 rounded-lg">
+                                    <option value="Bệnh viện công tuyến trung ương">BV Công tuyến TW</option>
+                                    <option value="Bệnh viện công tuyến tỉnh/huyện">BV Công tuyến Tỉnh/Huyện</option>
+                                    <option value="Bệnh viện Quốc tế/Tư nhân">BV Quốc tế / Tư nhân</option>
+                                    <option value="Phòng khám đa khoa">Phòng khám Đa khoa</option>
+                                    <option value="Y tế dự phòng/Trạm y tế">Y tế dự phòng / Trạm y tế</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Kỹ năng (ĐÃ CẬP NHẬT GIAO DIỆN LỚN HƠN) -->
+                        <div class="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Hard Skills -->
+                            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                <label class="block text-sm font-bold text-blue-800 mb-2 flex items-center">
+                                    <i data-lucide="activity" class="w-4 h-4 mr-2"></i> Kỹ năng Chuyên môn (Hard Skills)
+                                </label>
+                                <div class="space-y-2 h-48 overflow-y-auto pr-2 custom-scrollbar text-sm bg-white p-2 rounded border border-blue-200">
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="hard-skill" value="Lấy ven/Tiêm truyền khó" class="mr-2 rounded"> Lấy ven/Tiêm truyền khó</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="hard-skill" value="Đọc ECG & Monitor" class="mr-2 rounded"> Đọc ECG & Monitor</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="hard-skill" value="Cấp cứu ngừng tuần hoàn (CPR/BLS)" class="mr-2 rounded"> Cấp cứu ngừng tuần hoàn (CPR)</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="hard-skill" value="Sử dụng & Cai máy thở" class="mr-2 rounded"> Sử dụng & Cai máy thở</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="hard-skill" value="Chăm sóc vết thương/Thay băng" class="mr-2 rounded"> Chăm sóc vết thương/Thay băng</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="hard-skill" value="Đặt & Chăm sóc Sonde (Dạ dày/Tiểu)" class="mr-2 rounded"> Đặt & Chăm sóc Sonde</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="hard-skill" value="Quản lý đường truyền trung tâm (CVC)" class="mr-2 rounded"> Quản lý đường truyền trung tâm</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="hard-skill" value="Lọc máu/Chạy thận nhân tạo" class="mr-2 rounded"> Lọc máu/Chạy thận nhân tạo</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="hard-skill" value="Hỗ trợ phẫu thuật (Dụng cụ)" class="mr-2 rounded"> Hỗ trợ phẫu thuật (Dụng cụ)</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="hard-skill" value="Sử dụng PM Hồ sơ bệnh án (EMR)" class="mr-2 rounded"> Sử dụng PM Hồ sơ bệnh án (EMR)</label>
+                                </div>
+                                <input type="text" id="hard-skill-custom" placeholder="+ Kỹ năng chuyên môn khác..." class="mt-2 w-full p-2 text-xs border border-blue-200 rounded bg-white">
+                            </div>
+
+                            <!-- Soft Skills -->
+                            <div class="bg-pink-50 p-4 rounded-xl border border-pink-100">
+                                <label class="block text-sm font-bold text-pink-800 mb-2 flex items-center">
+                                    <i data-lucide="smile" class="w-4 h-4 mr-2"></i> Kỹ năng Mềm (Soft Skills)
+                                </label>
+                                <div class="space-y-2 h-48 overflow-y-auto pr-2 custom-scrollbar text-sm bg-white p-2 rounded border border-pink-200">
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="soft-skill" value="Giao tiếp trắc ẩn (Empathy)" class="mr-2 rounded"> Giao tiếp trắc ẩn (Empathy)</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="soft-skill" value="Chịu áp lực cao/Quản lý Stress" class="mr-2 rounded"> Chịu áp lực cao/Quản lý Stress</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="soft-skill" value="Làm việc nhóm đa chuyên khoa" class="mr-2 rounded"> Làm việc nhóm đa chuyên khoa</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="soft-skill" value="Tư duy phản biện & Ra quyết định" class="mr-2 rounded"> Tư duy phản biện & Ra quyết định</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="soft-skill" value="Giải quyết xung đột/Khiếu nại" class="mr-2 rounded"> Giải quyết xung đột/Khiếu nại</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="soft-skill" value="Quản lý thời gian & Sắp xếp ca kíp" class="mr-2 rounded"> Quản lý thời gian & Sắp xếp ca kíp</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="soft-skill" value="Tiếng Anh chuyên ngành Y" class="mr-2 rounded"> Tiếng Anh chuyên ngành Y</label>
+                                    <label class="flex items-center p-1 hover:bg-slate-50"><input type="checkbox" name="soft-skill" value="Kỹ năng sư phạm/Đào tạo" class="mr-2 rounded"> Kỹ năng sư phạm/Đào tạo</label>
+                                </div>
+                                <input type="text" id="soft-skill-custom" placeholder="+ Kỹ năng mềm khác..." class="mt-2 w-full p-2 text-xs border border-pink-200 rounded bg-white">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: CV Paste -->
+                <div id="cv-input-area" class="tab-content">
+                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-4">
+                        <p class="text-sm text-blue-800 flex items-start">
+                            <i data-lucide="info" class="w-5 h-5 mr-2 flex-shrink-0"></i>
+                            AI sẽ tự động trích xuất kinh nghiệm và kỹ năng từ nội dung CV của bạn để đưa ra tư vấn chính xác nhất.
+                        </p>
+                    </div>
+                    <textarea id="cv-content-input" rows="12" placeholder="Dán toàn bộ nội dung CV (Copy & Paste) vào đây..." class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-mono text-sm"></textarea>
+                </div>
+
+                <button onclick="submitPersonalData()" class="mt-8 w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center">
+                    Phân Tích Hồ Sơ & Tư Vấn Ngay <i data-lucide="arrow-right" class="w-6 h-6 ml-2"></i>
+                </button>
+            </div>
+
+            <!-- Step 2: Phân Tích & Lộ Trình -->
+            <div id="step-2" class="step-page">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mr-4">
+                        <span class="font-bold text-lg">2</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800">AI Mentor Phân Tích & Định Hướng</h2>
+                </div>
+
+                <div id="career-advice-container" class="bg-white rounded-2xl border border-slate-100 shadow-xl overflow-hidden min-h-[300px]">
+                    <!-- Placeholder state -->
+                    <div id="analysis-loading" class="flex flex-col items-center justify-center h-64 text-slate-500 hidden">
+                        <div class="relative w-16 h-16 mb-4">
+                            <div class="absolute top-0 left-0 w-full h-full border-4 border-slate-200 rounded-full"></div>
+                            <div class="absolute top-0 left-0 w-full h-full border-4 border-emerald-500 rounded-full animate-spin border-t-transparent"></div>
+                        </div>
+                        <p class="animate-pulse font-medium">Đang phân tích dữ liệu hồ sơ...</p>
+                        <p class="text-xs mt-2 text-slate-400">AI đang đối chiếu với 50+ tiêu chí bệnh viện...</p>
+                    </div>
+                    
+                    <!-- Result Content -->
+                    <div id="career-advice-result" class="p-6 md:p-8 space-y-6"></div>
+                </div>
+
+                <div class="mt-8 flex justify-end">
+                    <button id="next-btn" onclick="nextStep(3)" class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:bg-blue-700 transition duration-200 flex items-center hidden">
+                        Bước tiếp theo: Tối ưu CV <i data-lucide="chevron-right" class="w-5 h-5 ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Tối ưu hóa CV & Tham khảo -->
+            <div id="step-3" class="step-page">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mr-4">
+                        <span class="font-bold text-lg">3</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800">Công Cụ Tối Ưu Hóa Sự Nghiệp</h2>
+                </div>
+
+                <!-- Tab Buttons Step 3 -->
+                <div class="flex space-x-2 mb-6 overflow-x-auto pb-2 no-scrollbar">
+                    <button class="tab-button tab-button-step4 active whitespace-nowrap" onclick="showTabStep4('cv-review', this)">
+                        <i data-lucide="scan-face" class="w-4 h-4 mr-2"></i> Soi Lỗi & Sửa CV
+                    </button>
+                    <button class="tab-button tab-button-step4 whitespace-nowrap" onclick="showTabStep4('cv-templates', this)">
+                        <i data-lucide="file-check-2" class="w-4 h-4 mr-2"></i> Viết CV Mẫu
+                    </button>
+                    <button class="tab-button tab-button-step4 whitespace-nowrap" onclick="showTabStep4('qna-reference', this)">
+                        <i data-lucide="message-circle-question" class="w-4 h-4 mr-2"></i> Phỏng vấn Q&A
+                    </button>
+                </div>
+
+                <!-- Content 1: Soi Lỗi CV -->
+                <div id="cv-review" class="tab-content-step4 active">
+                    <div class="bg-orange-50 border border-orange-100 rounded-2xl p-6 mb-6">
+                        <h3 class="text-lg font-bold text-orange-800 mb-2 flex items-center">
+                            <i data-lucide="microscope" class="w-5 h-5 mr-2"></i> Chẩn đoán Hồ sơ
+                        </h3>
+                        <p class="text-sm text-orange-700 mb-4">AI sẽ đóng vai Nhà tuyển dụng khó tính để tìm ra điểm yếu trong hồ sơ của bạn.</p>
+                        <button onclick="analyzeCvGaps()" class="px-5 py-2 bg-white border border-orange-200 text-orange-700 font-semibold rounded-lg hover:bg-orange-100 transition shadow-sm flex items-center">
+                            <i data-lucide="scan-search" class="w-4 h-4 mr-2"></i> Quét Lỗi Ngay
+                        </button>
+                    </div>
+                    <div id="cv-gaps-result" class="fade-in hidden"></div>
+                </div>
+
+                <!-- Content 2: Viết CV Mẫu -->
+                <div id="cv-templates" class="tab-content-step4">
+                    <div class="bg-blue-50 border border-blue-100 rounded-2xl p-6 mb-6">
+                         <h3 class="text-lg font-bold text-blue-800 mb-2 flex items-center">
+                            <i data-lucide="pen-tool" class="w-5 h-5 mr-2"></i> AI Resume Writer
+                        </h3>
+                        <p class="text-sm text-blue-700 mb-4">Tự động viết lại CV của bạn theo chuẩn ATS, ngôn ngữ chuyên ngành y tế, tập trung vào thành tựu.</p>
+                        <button onclick="generateOptimizedCV()" class="px-5 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition shadow-md flex items-center">
+                            <i data-lucide="sparkles" class="w-4 h-4 mr-2"></i> Viết CV Mới
+                        </button>
+                    </div>
+                    <div id="optimized-cv-result" class="fade-in hidden"></div>
+                </div>
+
+                <!-- Content 3: Q&A -->
+                <div id="qna-reference" class="tab-content-step4">
+                     <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 mb-6">
+                        <h3 class="text-lg font-bold text-emerald-800 mb-2 flex items-center">
+                            <i data-lucide="users-2" class="w-5 h-5 mr-2"></i> Mô phỏng Phỏng vấn
+                        </h3>
+                        <p class="text-sm text-emerald-700 mb-4">Tạo bộ câu hỏi phỏng vấn sát thực tế nhất cho vị trí <strong id="qna-job-title">...</strong></p>
+                        <button onclick="generateQnAReference()" class="px-5 py-2 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition shadow-md flex items-center">
+                            <i data-lucide="play-circle" class="w-4 h-4 mr-2"></i> Tạo Câu hỏi & Gợi ý
+                        </button>
+                    </div>
+                    <div id="qna-reference-result" class="space-y-4 fade-in hidden"></div>
+                </div>
+
+                <button onclick="finishApp()" class="mt-10 w-full py-4 border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition flex items-center justify-center">
+                    <i data-lucide="check-circle-2" class="w-5 h-5 mr-2"></i> Kết thúc phiên tư vấn
+                </button>
+            </div>
+            <div class="footer">&copy - BeThuanDeThuong</div>
+        </main>
+    </div>
+
+    <!-- Loading Spinner (Global) -->
+    <div id="loading-spinner" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center animate-bounce-small">
+            <i data-lucide="activity" class="w-12 h-12 text-emerald-500 animate-pulse mb-4"></i>
+            <span class="text-slate-700 font-semibold text-lg">AI đang xử lý dữ liệu...</span>
+            <span class="text-slate-500 text-sm mt-2">Vui lòng đợi trong giây lát</span>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // ==========================================
+        // CẤU HÌNH API KEY (QUAN TRỌNG NHẤT CHO GITHUB PAGES)
+        // ==========================================
+        //
+        // HƯỚNG DẪN:
+        // 1. Để chạy file này trên GitHub Pages mà KHÔNG cần nhập Key mỗi lần:
+        //    Hãy DÁN API Key của bạn vào giữa hai dấu ngoặc kép ở dòng dưới đây.
+        //    Ví dụ: const userHardcodedKey = "AIzaSyD...key_cua_ban";
+        // 2. Nếu để trống (""), hệ thống sẽ hỏi người dùng nhập Key. Key này sẽ được lưu
+        //    trong trình duyệt (LocalStorage) cho các lần truy cập sau.
+        
+        const userHardcodedKey = "AIzaSyC9inP5GExlMQUVXJ6dFKXUPqL_PATE0tw"; 
+
+        // ==========================================
+        
+        const systemProvidedKey = ""; // System injected (usually empty in local/static hosting)
+        let currentStep = 1;
+        const totalSteps = 3;
+        let collectedData = {};
+
+        // DOM Cache
+        const els = {
+            progressBar: document.getElementById('progress-bar'),
+            stepName: document.getElementById('step-name'),
+            stepCounter: document.getElementById('step-counter'),
+            loadingSpinner: document.getElementById('loading-spinner'),
+            summarySelect: document.getElementById('summary-select'),
+            summaryInput: document.getElementById('summary-input'),
+            summaryPlaceholder: document.getElementById('summary-placeholder'),
+            salaryPreset: document.getElementById('salary-preset'),
+            salaryCustom: document.getElementById('salary-custom-input'),
+            certOtherInput: document.getElementById('cert-other-input'),
+            careerPathSelect: document.getElementById('career-path-select')
+        };
+
+        const stepNames = [
+            "Khởi tạo hồ sơ chuyên môn", "Phân tích & Định hướng", "Công cụ phát triển sự nghiệp"
+        ];
+
+        // --- UI Interactions ---
+        
+        // Handle Salary Input Toggle
+        els.salaryPreset.addEventListener('change', function() {
+            if (this.value === 'other') {
+                els.salaryCustom.classList.remove('hidden');
+                els.salaryCustom.value = '';
+                els.salaryCustom.focus();
+            } else {
+                els.salaryCustom.classList.add('hidden');
+                els.salaryCustom.value = this.value;
+            }
+        });
+
+        // Handle Summary Logic
+        window.toggleCustomSummary = () => {
+            const val = els.summarySelect.value;
+            let text = "";
+            
+            if (val === 'custom') {
+                els.summaryInput.classList.remove('hidden');
+                els.summaryPlaceholder.classList.add('hidden');
+                els.summaryInput.focus();
+            } else {
+                els.summaryInput.classList.add('hidden');
+                els.summaryPlaceholder.classList.remove('hidden');
+                
+                // Pre-defined texts
+                if(val === 'dynamic') text = "Tôi là Điều dưỡng viên Năng động, mạnh về giao tiếp và làm việc nhóm. Thích các hoạt động cộng đồng.";
+                if(val === 'cautious') text = "Tôi là người Cẩn trọng, tỉ mỉ, tuân thủ quy trình nghiêm ngặt. Phù hợp môi trường ICU/Phòng mổ.";
+                if(val === 'stable') text = "Tôi là người Ổn định, kiên nhẫn, thích sự gắn bó lâu dài và chăm sóc bệnh nhân tận tình.";
+                
+                els.summaryPlaceholder.textContent = `"${text}"`;
+                els.summaryInput.value = text;
+            }
+        };
+
+        // Tab Switching Logic
+        window.showTab = (tabId, btn) => {
+            // Reset logic for Step 1 tabs
+            document.querySelectorAll('#step-1 .tab-button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            document.querySelectorAll('#step-1 .tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            // Clear data on switch to avoid confusion
+            if(tabId === 'manual-input') document.getElementById('cv-content-input').value = '';
+        };
+
+        window.showTabStep4 = (tabId, btn) => {
+            document.querySelectorAll('#step-3 .tab-button-step4').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            document.querySelectorAll('#step-3 .tab-content-step4').forEach(c => {
+                c.classList.remove('active');
+                c.style.display = 'none'; // Force hide
+            });
+            
+            const target = document.getElementById(tabId);
+            target.style.display = 'block';
+            setTimeout(() => target.classList.add('active'), 10); // Small delay for animation
+
+            // Update Job Title for Q&A Tab
+            if (tabId === 'qna-reference') {
+                document.getElementById('qna-job-title').textContent = collectedData.careerPath || "...";
+            }
+        };
+
+        // --- Core Logic & API ---
+
+        window.resetApiKey = () => {
+            if(confirm("Bạn có muốn xóa API Key đang lưu trong trình duyệt để nhập Key mới không?")) {
+                localStorage.removeItem('gemini_api_key');
+                alert("Đã xóa Key. Lần chạy tiếp theo hệ thống sẽ yêu cầu bạn nhập Key mới.");
+                location.reload(); // Reload to apply changes
+            }
+        };
+
+        function updateStepUI(step) {
+            document.querySelectorAll('.step-page').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step-${step}`).classList.add('active');
+
+            const progress = (step / totalSteps) * 100;
+            els.progressBar.style.width = `${progress}%`;
+            els.stepName.textContent = stepNames[step - 1];
+            els.stepCounter.textContent = `${step} / ${totalSteps}`;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.nextStep = (s) => {
+            currentStep = s;
+            updateStepUI(currentStep);
+        };
+
+        window.finishApp = () => {
+            alert("Phiên tư vấn kết thúc. Chúc bạn thành công trên con đường sự nghiệp!");
+        };
+
+        // Data Collection
+        window.collectManualData = () => {
+            const hardSkills = Array.from(document.querySelectorAll('input[name="hard-skill"]:checked')).map(c => c.value);
+            if (document.getElementById('hard-skill-custom').value.trim()) {
+                hardSkills.push(document.getElementById('hard-skill-custom').value.trim());
+            }
+
+            const softSkills = Array.from(document.querySelectorAll('input[name="soft-skill"]:checked')).map(c => c.value);
+            if (document.getElementById('soft-skill-custom').value.trim()) {
+                softSkills.push(document.getElementById('soft-skill-custom').value.trim());
+            }
+
+            const certs = Array.from(document.querySelectorAll('input[name="certificate"]:checked')).map(c => c.value);
+            if(els.certOtherInput.value) certs.push(els.certOtherInput.value);
+
+            return {
+                name: document.getElementById('name-input').value,
+                age: document.getElementById('age-input').value,
+                gender: document.getElementById('gender-input').value,
+                degree: document.getElementById('degree-input').value,
+                experience: document.getElementById('experience-input').value,
+                summary: els.summaryInput.value,
+                salary: els.salaryCustom.value || els.salaryPreset.value,
+                environment: document.getElementById('environment-input').value,
+                hardSkills: hardSkills.join(', '),
+                softSkills: softSkills.join(', '),
+                certificates: certs.join(', ')
+            };
+        };
+
+        window.submitPersonalData = async () => {
+            const careerPath = els.careerPathSelect.value;
+            if(!careerPath) return alert("Vui lòng chọn Chuyên Ngành Mục tiêu!");
+            
+            const activeTab = document.querySelector('#step-1 .tab-content.active').id;
+            
+            if(activeTab === 'cv-input-area') {
+                const cvText = document.getElementById('cv-content-input').value;
+                if(!cvText.trim()) return alert("Vui lòng dán nội dung CV!");
+                collectedData = { source: 'CV', careerPath, cvContent: cvText };
+            } else {
+                const manualData = collectManualData();
+                if(!manualData.name) return alert("Vui lòng nhập tên!");
+                collectedData = { source: 'Manual', careerPath, ...manualData };
+            }
+
+            nextStep(2);
+            await generateCareerAdvice();
+        };
+
+        // API Helper
+        async function getValidApiKey() {
+            // 1. Check Hardcoded Key first (User added - Best for static hosting like GitHub Pages)
+            if (userHardcodedKey && userHardcodedKey.trim() !== "") {
+                return userHardcodedKey.trim();
+            }
+
+            // 2. Check System Key (Environment injected - Relevant for Canvas, ignored on GitHub Pages)
+            if (systemProvidedKey && systemProvidedKey.trim() !== "") {
+                return systemProvidedKey.trim();
+            }
+
+            // 3. Check LocalStorage (Saved from previous run)
+            const localKey = localStorage.getItem('gemini_api_key');
+            if (localKey && localKey.trim() !== "") {
+                return localKey.trim();
+            }
+
+            // 4. If all else fails, prompt user
+            const input = prompt("Ứng dụng cần Google Gemini API Key để hoạt động.\n\nNhập Key của bạn vào đây (Key sẽ được lưu vào trình duyệt cho lần sau):\n(Lấy key miễn phí tại: aistudio.google.com)");
+            
+            if (input && input.trim() !== "") {
+                const key = input.trim();
+                localStorage.setItem('gemini_api_key', key); // SAVE TO LOCAL STORAGE
+                return key;
+            }
+
+            return null;
+        }
+
+        async function callGeminiAPI(sysPrompt, userPrompt) {
+            const finalKey = await getValidApiKey();
+            
+            if (!finalKey) {
+                alert("Bạn cần cung cấp API Key để sử dụng tính năng phân tích AI.");
+                els.loadingSpinner.classList.add('hidden');
+                // Go back to step 1 if failed
+                nextStep(1); 
+                return null;
+            }
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${finalKey}`;
+
+            els.loadingSpinner.classList.remove('hidden');
+            try {
+                // Implementing a simple retry mechanism with exponential backoff for robustness
+                const maxRetries = 3;
+                let lastResult = null;
+                for (let i = 0; i < maxRetries; i++) {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: userPrompt }] }],
+                            generationConfig: { temperature: 0.7 },
+                            systemInstruction: { parts: [{ text: sysPrompt }] }
+                        })
+                    });
+                    
+                    const data = await response.json();
+
+                    if (!data.error) {
+                        lastResult = data;
+                        break; // Success
+                    }
+
+                    // Handle specific errors like API Key invalidation
+                    if (data.error.code === 400 || data.error.message.includes('API key')) {
+                        console.error("API Key Invalid/Expired:", data.error.message);
+                        alert(`API Key không hợp lệ hoặc đã hết hạn!\n\nHệ thống sẽ xóa Key cũ. Vui lòng thử lại với Key mới.`);
+                        localStorage.removeItem('gemini_api_key');
+                        els.loadingSpinner.classList.add('hidden');
+                        return null; // Stop immediately
+                    }
+
+                    // For other temporary errors (e.g., rate limits), wait and retry
+                    if (i < maxRetries - 1) {
+                        const delay = Math.pow(2, i) * 1000; // 1s, 2s, 4s
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    } else {
+                        throw new Error(`Failed after ${maxRetries} retries: ${data.error.message || 'Unknown error'}`);
+                    }
+                }
+                
+                els.loadingSpinner.classList.add('hidden');
+                return lastResult.candidates?.[0]?.content?.parts?.[0]?.text || null;
+
+            } catch (e) {
+                els.loadingSpinner.classList.add('hidden');
+                alert("Lỗi kết nối mạng hoặc API: " + e.message);
+                return null;
+            }
+        }
+
+        // --- AI Features with Optimized HTML Output ---
+
+        // 1. Career Advice (Step 2)
+        window.generateCareerAdvice = async () => {
+            const container = document.getElementById('career-advice-result');
+            const loader = document.getElementById('analysis-loading');
+            const nextBtn = document.getElementById('next-btn');
+            
+            container.innerHTML = '';
+            loader.classList.remove('hidden');
+            nextBtn.classList.add('hidden');
+
+            const dataStr = JSON.stringify(collectedData);
+            const systemPrompt = `Bạn là Giám đốc Điều dưỡng (Chief Nursing Officer) với 20 năm kinh nghiệm.
+            Nhiệm vụ: Phân tích hồ sơ ứng viên và đưa ra lời khuyên chiến lược.
+            
+            QUAN TRỌNG: Trả về kết quả dưới dạng mã HTML (không cần thẻ <html>, <body>). Sử dụng Tailwind CSS cho giao diện đẹp.
+            
+            Cấu trúc HTML mong muốn:
+            <div class="space-y-6">
+                <!-- Điểm số phù hợp -->
+                <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-100 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold text-indigo-900">Mức độ phù hợp: [Điểm]/10</h3>
+                        <p class="text-indigo-700 text-sm">[Nhận xét ngắn 1 câu]</p>
+                    </div>
+                    <div class="text-4xl">🎯</div>
+                </div>
+
+                <!-- Phân tích chi tiết (Grid 2 cột) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-100">
+                        <h4 class="font-bold text-emerald-800 mb-3 flex items-center">✅ Điểm mạnh</h4>
+                        <ul class="space-y-2 text-sm text-emerald-900">
+                            <li>[Điểm mạnh 1]</li>
+                            <li>[Điểm mạnh 2]</li>
+                        </ul>
+                    </div>
+                    <div class="bg-orange-50 p-5 rounded-xl border border-orange-100">
+                        <h4 class="font-bold text-orange-800 mb-3 flex items-center">⚠️ Cần cải thiện</h4>
+                        <ul class="space-y-2 text-sm text-orange-900">
+                            <li>[Điểm yếu 1]</li>
+                            <li>[Điểm yếu 2]</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Lộ trình (Timeline) -->
+                <div class="bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
+                    <h4 class="font-bold text-slate-800 mb-4 text-lg">📍 Lộ trình phát triển 3 năm tới</h4>
+                    <div class="space-y-4 border-l-2 border-blue-200 pl-4">
+                        <div class="relative">
+                            <div class="absolute -left-[21px] top-1 w-3 h-3 bg-blue-500 rounded-full"></div>
+                            <h5 class="font-bold text-slate-700">Ngắn hạn (0-1 năm)</h5>
+                            <p class="text-sm text-slate-600">[Hành động cụ thể: Học chứng chỉ gì? Làm ở đâu?]</p>
+                        </div>
+                         <div class="relative">
+                            <div class="absolute -left-[21px] top-1 w-3 h-3 bg-blue-300 rounded-full"></div>
+                            <h5 class="font-bold text-slate-700">Trung hạn (1-3 năm)</h5>
+                            <p class="text-sm text-slate-600">[Mục tiêu thăng tiến]</p>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+
+            const result = await callGeminiAPI(systemPrompt, `Phân tích dữ liệu sau cho vị trí ${collectedData.careerPath}: ${dataStr}`);
+            
+            loader.classList.add('hidden');
+            if(result) {
+                // Clean markdown tags if any
+                const cleanHtml = result.replace(/```html/g, '').replace(/```/g, '');
+                container.innerHTML = cleanHtml;
+                nextBtn.classList.remove('hidden');
+            } else {
+                container.innerHTML = `<div class="text-center p-6 bg-red-50 text-red-600 rounded-lg border border-red-200">
+                    <p class="font-bold">Lỗi phân tích hoặc thiếu dữ liệu.</p>
+                    <p class="text-sm mt-2">Vui lòng kiểm tra lại kết nối mạng hoặc API Key.</p>
+                </div>`;
+            }
+        };
+
+        // 2. CV Gaps Analysis (Step 3 - Tab 1)
+        window.analyzeCvGaps = async () => {
+            const container = document.getElementById('cv-gaps-result');
+            container.classList.remove('hidden');
+            container.innerHTML = '<div class="animate-pulse p-4 bg-slate-100 rounded text-center text-slate-500">Đang soi lỗi hồ sơ...</div>';
+
+            const systemPrompt = `Bạn là Nhà tuyển dụng Y tế khó tính. Hãy tìm ra các lỗ hổng trong hồ sơ ứng viên.
+            Trả về HTML sử dụng Tailwind CSS.
+            
+            Format:
+            <div class="space-y-4">
+                <div class="flex items-start p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-red-800">1. [Tên Lỗ Hổng]</h4>
+                        <p class="text-sm text-red-700 mt-1">[Giải thích tại sao đây là vấn đề]</p>
+                        <p class="text-xs font-semibold text-red-600 mt-2">💡 Khắc phục: [Lời khuyên ngắn]</p>
+                    </div>
+                </div>
+                <!-- Lặp lại cho 2-3 lỗ hổng -->
+            </div>`;
+
+            const result = await callGeminiAPI(systemPrompt, `Tìm lỗ hổng cho vị trí ${collectedData.careerPath}. Dữ liệu: ${JSON.stringify(collectedData)}`);
+            if (result) {
+                container.innerHTML = result.replace(/```html/g, '').replace(/```/g, '');
+            } else {
+                container.innerHTML = '<p class="text-red-500">Không thể phân tích. Vui lòng thử lại.</p>';
+            }
+        };
+
+        // 3. Generate Optimized CV (Step 3 - Tab 2)
+        window.generateOptimizedCV = async () => {
+            const container = document.getElementById('optimized-cv-result');
+            container.classList.remove('hidden');
+            container.innerHTML = '<div class="animate-pulse p-4 bg-slate-100 rounded text-center text-slate-500">Đang viết lại CV chuyên nghiệp...</div>';
+
+            const systemPrompt = `Bạn là Chuyên gia CV Y tế. Hãy viết lại nội dung CV của ứng viên cho vị trí ${collectedData.careerPath}.
+            Tập trung vào: Từ khóa chuyên ngành (ATS), Định lượng thành tích (số liệu), Sử dụng động từ mạnh.
+            
+            Format HTML (class 'cv-paper'):
+            <div class="cv-paper">
+                <h2 class="text-2xl font-bold uppercase border-b-2 border-black pb-2 mb-4 text-center">[Tên Ứng Viên]</h2>
+                <div class="mb-4">
+                    <h3 class="font-bold uppercase text-sm border-b mb-2">Mục tiêu nghề nghiệp</h3>
+                    <p class="text-sm text-justify">[Đoạn văn ngắn gọn, sắc bén]</p>
+                </div>
+                <div class="mb-4">
+                    <h3 class="font-bold uppercase text-sm border-b mb-2">Kinh nghiệm làm việc</h3>
+                    <!-- Liệt kê 2-3 đầu việc quan trọng nhất được viết lại -->
+                    <ul class="list-disc ml-5 text-sm space-y-1">
+                        <li>[Động từ mạnh] + [Nhiệm vụ] + [Kết quả/Số liệu]</li>
+                    </ul>
+                </div>
+                <div class="mb-4">
+                    <h3 class="font-bold uppercase text-sm border-b mb-2">Kỹ năng nổi bật</h3>
+                    <p class="text-sm">[Liệt kê các kỹ năng Hard/Soft skills quan trọng nhất cho vị trí này]</p>
+                </div>
+            </div>`;
+
+            const result = await callGeminiAPI(systemPrompt, `Viết CV cho hồ sơ: ${JSON.stringify(collectedData)}`);
+            if (result) {
+                container.innerHTML = result.replace(/```html/g, '').replace(/```/g, '');
+            } else {
+                container.innerHTML = '<p class="text-red-500">Không thể tạo CV. Vui lòng thử lại.</p>';
+            }
+        };
+
+        // 4. Generate Q&A Reference (Step 3 - Tab 3)
+        window.generateQnAReference = async () => {
+            const container = document.getElementById('qna-reference-result');
+            container.classList.remove('hidden');
+            container.innerHTML = '<div class="animate-pulse p-4 bg-slate-100 rounded text-center text-slate-500">Đang tổng hợp bộ câu hỏi phỏng vấn...</div>';
+
+            const systemPrompt = `Bạn là Trưởng khoa đang phỏng vấn tuyển dụng vị trí ${collectedData.careerPath}.
+            Hãy đưa ra 3 câu hỏi phỏng vấn hóc búa nhất và gợi ý trả lời thông minh.
+            
+            Format HTML:
+            <div class="space-y-4">
+                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                    <p class="font-bold text-slate-800 text-lg mb-2">❓ Câu hỏi 1: [Nội dung câu hỏi]</p>
+                    <div class="bg-emerald-50 p-3 rounded text-sm text-emerald-800">
+                        <strong>💡 Gợi ý trả lời:</strong> [Hướng dẫn trả lời theo mô hình STAR hoặc tập trung vào an toàn người bệnh]
+                    </div>
+                </div>
+                <!-- Lặp lại 3 câu -->
+            </div>`;
+
+            const result = await callGeminiAPI(systemPrompt, `Tạo câu hỏi phỏng vấn cho hồ sơ: ${JSON.stringify(collectedData)}`);
+            if (result) {
+                container.innerHTML = result.replace(/```html/g, '').replace(/```/g, '');
+            } else {
+                container.innerHTML = '<p class="text-red-500">Không thể tạo câu hỏi. Vui lòng thử lại.</p>';
+            }
+        };
+
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+    
+</body>
+</html>

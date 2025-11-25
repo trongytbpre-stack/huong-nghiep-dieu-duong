@@ -1,0 +1,144 @@
+:root {
+            font-family: 'Inter', sans-serif;
+        }
+        .header-font {
+            font-family: 'Merriweather', serif;
+        }
+
+        /* Custom Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        /* Progress Bar Styling */
+        .progress-container {
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Step Pages */
+        .step-page {
+            display: none;
+        }
+        .step-page.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 13px;
+            margin-top: 20px;
+            opacity: 0.7;
+        }
+
+        /* Tab Styling */
+        .tab-button {
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e5e7eb;
+            background-color: #ffffff;
+            color: #64748b;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tab-button:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+        }
+        .tab-button.active {
+            background-color: #eff6ff; /* Blue 50 */
+            color: #2563eb; /* Blue 600 */
+            border-color: #bfdbfe;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Step 3 Tab Styling Override */
+        .tab-button-step4.active {
+            background-color: #ecfdf5; /* Emerald 50 */
+            color: #059669; /* Emerald 600 */
+            border-color: #a7f3d0;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
+        .tab-content-step4 { display: none; }
+
+        /* Form Elements */
+        .form-input {
+            transition: all 0.2s;
+        }
+        .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Custom Scrollbar for lists */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Result Card Styling (cho nội dung AI sinh ra) */
+        .ai-result-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+        .ai-result-card ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .ai-result-card li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #334155;
+        }
+        .ai-result-card li::before {
+            content: "•";
+            color: #059669;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            font-size: 1.2em;
+        }
+
+        /* CV Display */
+        .cv-paper {
+            background: white;
+            padding: 2.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            font-family: 'Times New Roman', serif; /* Giả lập giấy tờ */
+            line-height: 1.6;
+        }
