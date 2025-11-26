@@ -6,6 +6,8 @@
     <title>AI Mentor - Hướng nghiệp Điều Dưỡng</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.10.111/pdf.min.js"></script>
+
     <!-- Load Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Fonts -->
@@ -252,7 +254,7 @@
                 </div>
 
                 <!-- Tab Content: CV Paste -->
-                <div id="cv-input-area" class="tab-content">
+                 <div id="cv-input-area" class="tab-content">
                     <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-4">
                         <p class="text-sm text-blue-800 flex items-start">
                             <i data-lucide="info" class="w-5 h-5 mr-2 flex-shrink-0"></i>
@@ -261,7 +263,6 @@
                     </div>
                     <textarea id="cv-content-input" rows="12" placeholder="Dán toàn bộ nội dung CV (Copy & Paste) vào đây..." class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-mono text-sm"></textarea>
                 </div>
-
                 <button onclick="submitPersonalData()" class="mt-8 w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center">
                     Phân Tích Hồ Sơ & Tư Vấn Ngay <i data-lucide="arrow-right" class="w-6 h-6 ml-2"></i>
                 </button>
@@ -381,22 +382,19 @@
 
     <!-- JavaScript Logic -->
     <script>
+
+        
         // ==========================================
         // CẤU HÌNH API KEY (QUAN TRỌNG NHẤT CHO GITHUB PAGES)
         // ==========================================
-        //
-        // HƯỚNG DẪN:
-        // 1. Để chạy file này trên GitHub Pages mà KHÔNG cần nhập Key mỗi lần:
-        //    Hãy DÁN API Key của bạn vào giữa hai dấu ngoặc kép ở dòng dưới đây.
-        //    Ví dụ: const userHardcodedKey = "AIzaSyD...key_cua_ban";
-        // 2. Nếu để trống (""), hệ thống sẽ hỏi người dùng nhập Key. Key này sẽ được lưu
-        //    trong trình duyệt (LocalStorage) cho các lần truy cập sau.
         
-        const userHardcodedKey = "AIzaSyC9inP5GExlMQUVXJ6dFKXUPqL_PATE0tw"; 
+        // ENDPOINT ĐƯỢC DÙNG. API KEY SẼ ĐƯỢC QUẢN LÝ HOÀN TOÀN TẠI VERCEL.
+        const PROXY_ENDPOINT = "https://gemini-proxy-serverless-lidy.vercel.app/api/generate";
 
         // ==========================================
         
-        const systemProvidedKey = ""; // System injected (usually empty in local/static hosting)
+        const systemProvidedKey = ""; // System injected (ignored in this setup)
+        const userHardcodedKey = ""; // Must be empty to ensure security
         let currentStep = 1;
         const totalSteps = 3;
         let collectedData = {};
@@ -492,11 +490,8 @@
         // --- Core Logic & API ---
 
         window.resetApiKey = () => {
-            if(confirm("Bạn có muốn xóa API Key đang lưu trong trình duyệt để nhập Key mới không?")) {
-                localStorage.removeItem('gemini_api_key');
-                alert("Đã xóa Key. Lần chạy tiếp theo hệ thống sẽ yêu cầu bạn nhập Key mới.");
-                location.reload(); // Reload to apply changes
-            }
+            // Không còn tác dụng trong mô hình Keyless, nhưng giữ lại hàm để tránh lỗi
+            alert("Ứng dụng đang chạy ở chế độ bảo mật (Keyless Client). API Key được quản lý tại Vercel Proxy.");
         };
 
         function updateStepUI(step) {
@@ -570,102 +565,136 @@
             await generateCareerAdvice();
         };
 
-        // API Helper
+        // Hàm đã được sửa: Luôn trả về null, KHÔNG PROMPT KEY
         async function getValidApiKey() {
-            // 1. Check Hardcoded Key first (User added - Best for static hosting like GitHub Pages)
-            if (userHardcodedKey && userHardcodedKey.trim() !== "") {
-                return userHardcodedKey.trim();
-            }
-
-            // 2. Check System Key (Environment injected - Relevant for Canvas, ignored on GitHub Pages)
-            if (systemProvidedKey && systemProvidedKey.trim() !== "") {
-                return systemProvidedKey.trim();
-            }
-
-            // 3. Check LocalStorage (Saved from previous run)
-            const localKey = localStorage.getItem('gemini_api_key');
-            if (localKey && localKey.trim() !== "") {
-                return localKey.trim();
-            }
-
-            // 4. If all else fails, prompt user
-            const input = prompt("Ứng dụng cần Google Gemini API Key để hoạt động.\n\nNhập Key của bạn vào đây (Key sẽ được lưu vào trình duyệt cho lần sau):\n(Lấy key miễn phí tại: aistudio.google.com)");
-            
-            if (input && input.trim() !== "") {
-                const key = input.trim();
-                localStorage.setItem('gemini_api_key', key); // SAVE TO LOCAL STORAGE
-                return key;
-            }
-
             return null;
         }
+        async function generateOptimizedCV() {
+    const cvInput = document.getElementById("cv-content-input").value.trim();
+    if (!cvInput) {
+        alert("Vui lòng nhập hoặc upload nội dung CV trước.");
+        return;
+    }
 
+    // ⚡ 1. PROMPT CHUẨN – ÉP HTML, KHÔNG ĐƯỢC SÁNG TẠO
+    const systemPrompt = `
+Bạn là chuyên gia nhân sự trong ngành y tế.
+
+NHIỆM VỤ:
+- Viết lại CV theo đúng nội dung người dùng cung cấp.
+- TRẢ VỀ 100% HTML THUẦN.
+- KHÔNG dùng markdown.
+- KHÔNG dùng codeblock (không có \`\`\`html).
+- KHÔNG thêm văn bản ngoài HTML.
+- KHÔNG được thay đổi bố cục ngoài template bên dưới.
+- Không thêm icon lạ, không tự đổi class Tailwind.
+- Nếu mục nào không có dữ liệu thì để trống.
+
+BẮT BUỘC dùng đúng template:
+
+<div class="cv-wrapper space-y-6 text-slate-800">
+  <h1 class="text-2xl font-bold name"></h1>
+
+  <div class="info space-y-1">
+    <p><strong>Điện thoại:</strong> </p>
+    <p><strong>Email:</strong> </p>
+    <p><strong>Địa chỉ:</strong> </p>
+  </div>
+
+  <div>
+    <h2 class="text-xl font-bold">MỤC TIÊU NGHỀ NGHIỆP</h2>
+    <ul class="career-goals list-disc pl-5"></ul>
+  </div>
+
+  <div>
+    <h2 class="text-xl font-bold">KINH NGHIỆM LÀM VIỆC</h2>
+    <div class="experience space-y-4"></div>
+  </div>
+
+  <div>
+    <h2 class="text-xl font-bold">HỌC VẤN</h2>
+    <div class="education space-y-2"></div>
+  </div>
+
+  <div>
+    <h2 class="text-xl font-bold">CHỨNG CHỈ</h2>
+    <ul class="certificates list-disc pl-5"></ul>
+  </div>
+
+  <div>
+    <h2 class="text-xl font-bold">KỸ NĂNG</h2>
+    <ul class="skills list-disc pl-5"></ul>
+  </div>
+
+  <div>
+    <h2 class="text-xl font-bold">SỞ THÍCH</h2>
+    <ul class="hobbies list-disc pl-5"></ul>
+  </div>
+</div>
+`;
+
+    // ⚡ 2. Gửi yêu cầu tới server Vercel (API Gemini)
+    const aiResult = await callGeminiAPI(systemPrompt, cvInput);
+    if (!aiResult) {
+        alert("Không thể tạo CV. Vui lòng thử lại.");
+        return;
+    }
+
+    // ⚡ 3. Làm sạch output AI — tránh phá format
+    const cleaned = aiResult
+        .replace(/```html/gi, "")
+        .replace(/```/g, "")
+        .trim();
+
+    // ⚡ 4. Render ra UI
+    const outputDiv = document.getElementById("optimized-cv-result");
+    outputDiv.innerHTML = cleaned;
+    outputDiv.classList.remove("hidden");
+    outputDiv.scrollIntoView({ behavior: "smooth" });
+}
+
+        // Hàm đã được sửa: GỌI PROXY_ENDPOINT và KHÔNG GỬI API KEY TRONG BODY
         async function callGeminiAPI(sysPrompt, userPrompt) {
-            const finalKey = await getValidApiKey();
-            
-            if (!finalKey) {
-                alert("Bạn cần cung cấp API Key để sử dụng tính năng phân tích AI.");
-                els.loadingSpinner.classList.add('hidden');
-                // Go back to step 1 if failed
+            // Không cần gọi getValidApiKey() nữa
+            const apiUrl = PROXY_ENDPOINT;
+
+            els.loadingSpinner.classList.remove("hidden");
+
+            const bodyPayload = {
+                systemPrompt: sysPrompt,
+                userQuery: userPrompt
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(bodyPayload)
+                });
+
+                const data = await response.json();
+                els.loadingSpinner.classList.add("hidden");
+
+                if (!response.ok) {
+                    console.error("Proxy error:", data);
+                    throw new Error(JSON.stringify(data));
+                }
+
+                // server trả về { text: "..."}
+                return data.text;
+
+            } catch (err) {
+                console.error("API error:", err);
+                els.loadingSpinner.classList.add("hidden");
+                alert("Không gọi được API Proxy. Lỗi: " + err.message);
                 nextStep(1); 
                 return null;
             }
-
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${finalKey}`;
-
-            els.loadingSpinner.classList.remove('hidden');
-            try {
-                // Implementing a simple retry mechanism with exponential backoff for robustness
-                const maxRetries = 3;
-                let lastResult = null;
-                for (let i = 0; i < maxRetries; i++) {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: userPrompt }] }],
-                            generationConfig: { temperature: 0.7 },
-                            systemInstruction: { parts: [{ text: sysPrompt }] }
-                        })
-                    });
-                    
-                    const data = await response.json();
-
-                    if (!data.error) {
-                        lastResult = data;
-                        break; // Success
-                    }
-
-                    // Handle specific errors like API Key invalidation
-                    if (data.error.code === 400 || data.error.message.includes('API key')) {
-                        console.error("API Key Invalid/Expired:", data.error.message);
-                        alert(`API Key không hợp lệ hoặc đã hết hạn!\n\nHệ thống sẽ xóa Key cũ. Vui lòng thử lại với Key mới.`);
-                        localStorage.removeItem('gemini_api_key');
-                        els.loadingSpinner.classList.add('hidden');
-                        return null; // Stop immediately
-                    }
-
-                    // For other temporary errors (e.g., rate limits), wait and retry
-                    if (i < maxRetries - 1) {
-                        const delay = Math.pow(2, i) * 1000; // 1s, 2s, 4s
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                    } else {
-                        throw new Error(`Failed after ${maxRetries} retries: ${data.error.message || 'Unknown error'}`);
-                    }
-                }
-                
-                els.loadingSpinner.classList.add('hidden');
-                return lastResult.candidates?.[0]?.content?.parts?.[0]?.text || null;
-
-            } catch (e) {
-                els.loadingSpinner.classList.add('hidden');
-                alert("Lỗi kết nối mạng hoặc API: " + e.message);
-                return null;
-            }
         }
-
+        
         // --- AI Features with Optimized HTML Output ---
-
+        // ... (Các hàm generateCareerAdvice, analyzeCvGaps, generateOptimizedCV, generateQnAReference giữ nguyên logic gọi callGeminiAPI)
+        
         // 1. Career Advice (Step 2)
         window.generateCareerAdvice = async () => {
             const container = document.getElementById('career-advice-result');
@@ -684,7 +713,6 @@
             
             Cấu trúc HTML mong muốn:
             <div class="space-y-6">
-                <!-- Điểm số phù hợp -->
                 <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-100 flex items-center justify-between">
                     <div>
                         <h3 class="text-xl font-bold text-indigo-900">Mức độ phù hợp: [Điểm]/10</h3>
@@ -693,7 +721,6 @@
                     <div class="text-4xl">🎯</div>
                 </div>
 
-                <!-- Phân tích chi tiết (Grid 2 cột) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-100">
                         <h4 class="font-bold text-emerald-800 mb-3 flex items-center">✅ Điểm mạnh</h4>
@@ -711,7 +738,6 @@
                     </div>
                 </div>
 
-                <!-- Lộ trình (Timeline) -->
                 <div class="bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
                     <h4 class="font-bold text-slate-800 mb-4 text-lg">📍 Lộ trình phát triển 3 năm tới</h4>
                     <div class="space-y-4 border-l-2 border-blue-200 pl-4">
@@ -763,8 +789,7 @@
                         <p class="text-xs font-semibold text-red-600 mt-2">💡 Khắc phục: [Lời khuyên ngắn]</p>
                     </div>
                 </div>
-                <!-- Lặp lại cho 2-3 lỗ hổng -->
-            </div>`;
+                </div>`;
 
             const result = await callGeminiAPI(systemPrompt, `Tìm lỗ hổng cho vị trí ${collectedData.careerPath}. Dữ liệu: ${JSON.stringify(collectedData)}`);
             if (result) {
@@ -776,40 +801,65 @@
 
         // 3. Generate Optimized CV (Step 3 - Tab 2)
         window.generateOptimizedCV = async () => {
-            const container = document.getElementById('optimized-cv-result');
-            container.classList.remove('hidden');
-            container.innerHTML = '<div class="animate-pulse p-4 bg-slate-100 rounded text-center text-slate-500">Đang viết lại CV chuyên nghiệp...</div>';
+    const container = document.getElementById('optimized-cv-result');
+    container.classList.remove('hidden');
+    container.innerHTML = '<div class="animate-pulse p-4 bg-slate-100 rounded text-center text-slate-500">Đang viết lại CV chuyên nghiệp...</div>';
 
-            const systemPrompt = `Bạn là Chuyên gia CV Y tế. Hãy viết lại nội dung CV của ứng viên cho vị trí ${collectedData.careerPath}.
-            Tập trung vào: Từ khóa chuyên ngành (ATS), Định lượng thành tích (số liệu), Sử dụng động từ mạnh.
-            
-            Format HTML (class 'cv-paper'):
-            <div class="cv-paper">
-                <h2 class="text-2xl font-bold uppercase border-b-2 border-black pb-2 mb-4 text-center">[Tên Ứng Viên]</h2>
-                <div class="mb-4">
-                    <h3 class="font-bold uppercase text-sm border-b mb-2">Mục tiêu nghề nghiệp</h3>
-                    <p class="text-sm text-justify">[Đoạn văn ngắn gọn, sắc bén]</p>
-                </div>
-                <div class="mb-4">
-                    <h3 class="font-bold uppercase text-sm border-b mb-2">Kinh nghiệm làm việc</h3>
-                    <!-- Liệt kê 2-3 đầu việc quan trọng nhất được viết lại -->
-                    <ul class="list-disc ml-5 text-sm space-y-1">
-                        <li>[Động từ mạnh] + [Nhiệm vụ] + [Kết quả/Số liệu]</li>
-                    </ul>
-                </div>
-                <div class="mb-4">
-                    <h3 class="font-bold uppercase text-sm border-b mb-2">Kỹ năng nổi bật</h3>
-                    <p class="text-sm">[Liệt kê các kỹ năng Hard/Soft skills quan trọng nhất cho vị trí này]</p>
-                </div>
-            </div>`;
+    const systemPrompt = `
+Bạn là chuyên gia viết CV ngành Y tế.
 
-            const result = await callGeminiAPI(systemPrompt, `Viết CV cho hồ sơ: ${JSON.stringify(collectedData)}`);
-            if (result) {
-                container.innerHTML = result.replace(/```html/g, '').replace(/```/g, '');
-            } else {
-                container.innerHTML = '<p class="text-red-500">Không thể tạo CV. Vui lòng thử lại.</p>';
-            }
-        };
+YÊU CẦU BẮT BUỘC:
+- TRẢ VỀ 100% HTML.
+- KHÔNG markdown.
+- KHÔNG dùng codeblock (không có \`\`\`).
+- KHÔNG thêm chú thích, giải thích, mô tả.
+- KHÔNG thay đổi class hoặc thêm bố cục mới bên ngoài template.
+- Chỉ được thay nội dung vào đúng vị trí.
+
+BẮT BUỘC dùng đúng TEMPLATE sau:
+
+<div class="cv-paper">
+    <h2 class="text-2xl font-bold uppercase border-b-2 border-black pb-2 mb-4 text-center">[Tên Ứng Viên]</h2>
+
+    <div class="mb-4">
+        <h3 class="font-bold uppercase text-sm border-b mb-2">Mục tiêu nghề nghiệp</h3>
+        <p class="text-sm text-justify">[Mục tiêu được viết lại rõ ràng, súc tích]</p>
+    </div>
+
+    <div class="mb-4">
+        <h3 class="font-bold uppercase text-sm border-b mb-2">Kinh nghiệm làm việc</h3>
+        <ul class="list-disc ml-5 text-sm space-y-1">
+            <li>[Động từ mạnh] + [Nhiệm vụ] + [Kết quả/ % / số liệu]</li>
+        </ul>
+    </div>
+
+    <div class="mb-4">
+        <h3 class="font-bold uppercase text-sm border-b mb-2">Kỹ năng nổi bật</h3>
+        <p class="text-sm">[Hard Skills / Soft Skills phù hợp vị trí]</p>
+    </div>
+</div>
+
+Chỉ thay nội dung vào trong template trên.
+KHÔNG thêm văn bản ngoài HTML.
+`;
+
+    const result = await callGeminiAPI(
+        systemPrompt, 
+        `Hãy viết lại CV cho hồ sơ sau: ${JSON.stringify(collectedData)}`
+    );
+
+    if (result) {
+        // CLEAN CHUẨN — KHÔNG PHÁ FORMAT
+        const clean = result
+            .replace(/```html/gi, "")
+            .replace(/```/g, "")
+            .trim();
+
+        container.innerHTML = clean;
+    } else {
+        container.innerHTML = '<p class="text-red-500">Không thể tạo CV. Vui lòng thử lại.</p>';
+    }
+};
 
         // 4. Generate Q&A Reference (Step 3 - Tab 3)
         window.generateQnAReference = async () => {
@@ -828,8 +878,7 @@
                         <strong>💡 Gợi ý trả lời:</strong> [Hướng dẫn trả lời theo mô hình STAR hoặc tập trung vào an toàn người bệnh]
                     </div>
                 </div>
-                <!-- Lặp lại 3 câu -->
-            </div>`;
+                </div>`;
 
             const result = await callGeminiAPI(systemPrompt, `Tạo câu hỏi phỏng vấn cho hồ sơ: ${JSON.stringify(collectedData)}`);
             if (result) {
