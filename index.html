@@ -414,6 +414,51 @@
             careerPathSelect: document.getElementById('career-path-select')
         };
 
+        function basicMarkdownToHtml(raw) {
+            const lines = raw.split(/\r?\n/);
+            let html = '';
+            let inList = false;
+
+            for (const line of lines) {
+                const trimmed = line.trim();
+
+                if (!trimmed) {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    continue;
+                }
+
+                const bulletMatch = trimmed.match(/^[-*]\s+(.*)/);
+
+                if (bulletMatch) {
+                    if (!inList) {
+                        html += '<ul class="list-disc pl-5 space-y-1">';
+                        inList = true;
+                    }
+
+                    let item = bulletMatch[1];
+                    item = item.replace(/\*\*(.+?)\*\*/g, '<strong>$1<\/strong>');
+                    html += `<li>${item}</li>`;
+                } else {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+
+                    let text = trimmed.replace(/\*\*(.+?)\*\*/g, '<strong>$1<\/strong>');
+                    html += `<p class="mb-1">${text}</p>`;
+                }
+            }
+
+            if (inList) {
+                html += '</ul>';
+            }
+
+            return html;
+        }
+
         const stepNames = [
             "Khởi tạo hồ sơ chuyên môn", "Phân tích & Định hướng", "Công cụ phát triển sự nghiệp"
         ];
@@ -431,6 +476,84 @@
                 els.salaryCustom.value = this.value;
             }
         });
+// Add this function to your JavaScript
+function displayCVScore(score, container) {
+    const scoreHTML = `
+        <div class="mt-8 p-6 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl border border-blue-100">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Điểm đánh giá CV</h3>
+                    <p class="text-slate-600">Dựa trên tiêu chí chuyên môn và yêu cầu ngành Y tế</p>
+                </div>
+                <div class="mt-4 md:mt-0 text-center">
+                    <div class="text-5xl font-bold text-blue-600">${score}/100</div>
+                    <div class="text-sm text-slate-500">Tổng điểm</div>
+                </div>
+            </div>
+            
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded-lg border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Nội dung CV</span>
+                        <span class="font-bold text-blue-600">${Math.round(score * 0.4)}/40</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-blue-500 h-2 rounded-full" style="width: ${score * 0.4}%"></div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-4 rounded-lg border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Định dạng & Bố cục</span>
+                        <span class="font-bold text-blue-600">${Math.round(score * 0.25)}/25</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-green-500 h-2 rounded-full" style="width: ${score * 0.25}%"></div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-4 rounded-lg border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Từ khóa chuyên ngành</span>
+                        <span class="font-bold text-blue-600">${Math.round(score * 0.2)}/20</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-yellow-500 h-2 rounded-full" style="width: ${score * 0.2}%"></div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-4 rounded-lg border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Trình bày chuyên nghiệp</span>
+                        <span class="font-bold text-blue-600">${Math.round(score * 0.15)}/15</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-purple-500 h-2 rounded-full" style="width: ${score * 0.15}%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 p-4 bg-white rounded-lg border border-blue-100">
+                <h4 class="font-semibold text-slate-800 mb-2">Nhận xét:</h4>
+                <p id="cv-feedback" class="text-slate-700">${getCVFeedback(score)}</p>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('afterend', scoreHTML);
+}
+
+function getCVFeedback(score) {
+    if (score >= 90) {
+        return "CV xuất sắc! Đạt tiêu chuẩn cao của ngành Y tế. Bạn có thể tự tin nộp đơn vào các bệnh viện lớn.";
+    } else if (score >= 75) {
+        return "CV tốt, đã đáp ứng các yêu cầu cơ bản. Có thể cải thiện thêm một số phần để nâng cao chất lượng.";
+    } else if (score >= 60) {
+        return "CV đạt yêu cầu nhưng cần cải thiện nhiều để cạnh tranh tốt hơn. Nên bổ sung thêm thông tin chi tiết về kinh nghiệm và kỹ năng.";
+    } else {
+        return "CV cần được cải thiện đáng kể. Nên tham khảo thêm mẫu CV chuyên nghiệp trong ngành Y tế và bổ sung đầy đủ thông tin cần thiết.";
+    }
+}
 
         // Handle Summary Logic
         window.toggleCustomSummary = () => {
@@ -654,44 +777,53 @@ BẮT BUỘC dùng đúng template:
 }
 
         // Hàm đã được sửa: GỌI PROXY_ENDPOINT và KHÔNG GỬI API KEY TRONG BODY
-        async function callGeminiAPI(sysPrompt, userPrompt) {
-            // Không cần gọi getValidApiKey() nữa
-            const apiUrl = PROXY_ENDPOINT;
+        // In the index.html file, update the callGeminiAPI function to include better error handling
+// In your index.html, update the callGeminiAPI function:
+async function callGeminiAPI(sysPrompt, userPrompt) {
+    const apiUrl = PROXY_ENDPOINT;
+    els.loadingSpinner.classList.remove("hidden");
 
-            els.loadingSpinner.classList.remove("hidden");
+    const bodyPayload = {
+        systemPrompt: sysPrompt,
+        userQuery: userPrompt
+    };
 
-            const bodyPayload = {
-                systemPrompt: sysPrompt,
-                userQuery: userPrompt
-            };
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json"
+                // Remove Cache-Control header from here
+            },
+            body: JSON.stringify(bodyPayload),
+            mode: 'cors' // Ensure CORS mode is enabled
+        });
 
-            try {
-                const response = await fetch(apiUrl, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(bodyPayload)
-                });
-
-                const data = await response.json();
-                els.loadingSpinner.classList.add("hidden");
-
-                if (!response.ok) {
-                    console.error("Proxy error:", data);
-                    throw new Error(JSON.stringify(data));
-                }
-
-                // server trả về { text: "..."}
-                return data.text;
-
-            } catch (err) {
-                console.error("API error:", err);
-                els.loadingSpinner.classList.add("hidden");
-                alert("Không gọi được API Proxy. Lỗi: " + err.message);
-                nextStep(1); 
-                return null;
-            }
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
         }
-        
+
+        const data = await response.json();
+        els.loadingSpinner.classList.add("hidden");
+
+        if (!data || !data.text) {
+            throw new Error("Invalid response format from API");
+        }
+
+        return data.text;
+
+    } catch (err) {
+        console.error("API call failed:", {
+            error: err,
+            systemPrompt: sysPrompt?.substring(0, 100) + (sysPrompt?.length > 100 ? "..." : ""),
+            userPrompt: userPrompt?.substring(0, 100) + (userPrompt?.length > 100 ? "..." : "Empty")
+        });
+        els.loadingSpinner.classList.add("hidden");
+        alert(`Có lỗi xảy ra: ${err.message || 'Vui lòng thử lại sau'}`);
+        return null;
+    }
+}
         // --- AI Features with Optimized HTML Output ---
         // ... (Các hàm generateCareerAdvice, analyzeCvGaps, generateOptimizedCV, generateQnAReference giữ nguyên logic gọi callGeminiAPI)
         
@@ -706,161 +838,335 @@ BẮT BUỘC dùng đúng template:
             nextBtn.classList.add('hidden');
 
             const dataStr = JSON.stringify(collectedData);
+
+            // YÊU CẦU GEMINI: DÒNG ĐẦU TIÊN LÀ "SCORE: x.x/10", SAU ĐÓ LÀ HTML
             const systemPrompt = `Bạn là Giám đốc Điều dưỡng (Chief Nursing Officer) với 20 năm kinh nghiệm.
-            Nhiệm vụ: Phân tích hồ sơ ứng viên và đưa ra lời khuyên chiến lược.
-            
-            QUAN TRỌNG: Trả về kết quả dưới dạng mã HTML (không cần thẻ <html>, <body>). Sử dụng Tailwind CSS cho giao diện đẹp.
-            
-            Cấu trúc HTML mong muốn:
-            <div class="space-y-6">
-                <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-100 flex items-center justify-between">
-                    <div>
-                        <h3 class="text-xl font-bold text-indigo-900">Mức độ phù hợp: [Điểm]/10</h3>
-                        <p class="text-indigo-700 text-sm">[Nhận xét ngắn 1 câu]</p>
-                    </div>
-                    <div class="text-4xl">🎯</div>
-                </div>
+Nhiệm vụ: Phân tích hồ sơ ứng viên và đưa ra lời khuyên chiến lược cho vị trí điều dưỡng.
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-100">
-                        <h4 class="font-bold text-emerald-800 mb-3 flex items-center">✅ Điểm mạnh</h4>
-                        <ul class="space-y-2 text-sm text-emerald-900">
-                            <li>[Điểm mạnh 1]</li>
-                            <li>[Điểm mạnh 2]</li>
-                        </ul>
-                    </div>
-                    <div class="bg-orange-50 p-5 rounded-xl border border-orange-100">
-                        <h4 class="font-bold text-orange-800 mb-3 flex items-center">⚠️ Cần cải thiện</h4>
-                        <ul class="space-y-2 text-sm text-orange-900">
-                            <li>[Điểm yếu 1]</li>
-                            <li>[Điểm yếu 2]</li>
-                        </ul>
-                    </div>
-                </div>
+QUAN TRỌNG:
+- Dòng đầu tiên của toàn bộ câu trả lời phải có dạng CHÍNH XÁC:  SCORE: 8.5/10  (ví dụ vậy, chỉ khác ở con số).
+- Sau dòng SCORE, xuống dòng rồi TRẢ VỀ 100% HTML THUẦN.
+- KHÔNG dùng markdown (** **, *, ---, #, v.v.).
+- KHÔNG dùng codeblock (không dùng chuỗi ba dấu nháy ngược liên tiếp).
+- KHÔNG thêm văn bản giải thích ngoài HTML sau dòng SCORE.
 
-                <div class="bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
-                    <h4 class="font-bold text-slate-800 mb-4 text-lg">📍 Lộ trình phát triển 3 năm tới</h4>
-                    <div class="space-y-4 border-l-2 border-blue-200 pl-4">
-                        <div class="relative">
-                            <div class="absolute -left-[21px] top-1 w-3 h-3 bg-blue-500 rounded-full"></div>
-                            <h5 class="font-bold text-slate-700">Ngắn hạn (0-1 năm)</h5>
-                            <p class="text-sm text-slate-600">[Hành động cụ thể: Học chứng chỉ gì? Làm ở đâu?]</p>
-                        </div>
-                         <div class="relative">
-                            <div class="absolute -left-[21px] top-1 w-3 h-3 bg-blue-300 rounded-full"></div>
-                            <h5 class="font-bold text-slate-700">Trung hạn (1-3 năm)</h5>
-                            <p class="text-sm text-slate-600">[Mục tiêu thăng tiến]</p>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
+YÊU CẦU VỚI PHẦN HTML:
+- Không chứa thẻ <html>, <body>.
+- Sử dụng Tailwind CSS cho giao diện đẹp.
+- Bám theo cấu trúc sau (có thể thay nội dung trong ngoặc vuông nhưng giữ layout):
 
-            const result = await callGeminiAPI(systemPrompt, `Phân tích dữ liệu sau cho vị trí ${collectedData.careerPath}: ${dataStr}`);
+<div class="space-y-6">
+  <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-100 flex items-center justify-between">
+    <div>
+      <h3 class="text-xl font-bold text-indigo-900">Mức độ phù hợp tổng quan</h3>
+      <p class="text-indigo-700 text-sm">[Nhận xét tổng quan 1-2 câu về độ phù hợp của ứng viên với vị trí]</p>
+    </div>
+    <div class="text-4xl">🎯</div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-100">
+      <h4 class="font-bold text-emerald-800 mb-3 flex items-center">✅ Điểm mạnh nổi bật</h4>
+      <ul class="space-y-2 text-sm text-emerald-900">
+        <li>[Điểm mạnh 1]</li>
+        <li>[Điểm mạnh 2]</li>
+        <li>[Điểm mạnh 3]</li>
+      </ul>
+    </div>
+    <div class="bg-orange-50 p-5 rounded-xl border border-orange-100">
+      <h4 class="font-bold text-orange-800 mb-3 flex items-center">⚠️ Điểm cần cải thiện</h4>
+      <ul class="space-y-2 text-sm text-orange-900">
+        <li>[Điểm yếu 1]</li>
+        <li>[Điểm yếu 2]</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
+    <h4 class="font-bold text-slate-800 mb-4 text-lg">📍 Gợi ý lộ trình 3 năm tới</h4>
+    <div class="space-y-4 border-l-2 border-blue-200 pl-4">
+      <div class="relative">
+        <div class="absolute -left-[21px] top-1 w-3 h-3 bg-blue-500 rounded-full"></div>
+        <h5 class="font-bold text-slate-700">Ngắn hạn (0-1 năm)</h5>
+        <p class="text-sm text-slate-600">[Hành động cụ thể]</p>
+      </div>
+      <div class="relative">
+        <div class="absolute -left-[21px] top-1 w-3 h-3 bg-blue-300 rounded-full"></div>
+        <h5 class="font-bold text-slate-700">Trung hạn (1-3 năm)</h5>
+        <p class="text-sm text-slate-600">[Mục tiêu phát triển và thăng tiến]</p>
+      </div>
+    </div>
+  </div>
+</div>`;
+
+            const userPrompt = `Phân tích dữ liệu ứng viên sau cho vị trí ${collectedData.careerPath} và TRẢ VỀ theo đúng format:
+1) Dòng 1: "SCORE: x.x/10" (duy nhất, không thêm gì khác trên dòng này)
+2) Từ dòng 2 trở đi: HTML thuần theo đúng yêu cầu trong hướng dẫn hệ thống.
+
+Dữ liệu ứng viên (JSON): ${dataStr}`;
+
+            const result = await callGeminiAPI(systemPrompt, userPrompt);
             
             loader.classList.add('hidden');
-            if(result) {
-                // Clean markdown tags if any
-                const cleanHtml = result.replace(/```html/g, '').replace(/```/g, '');
-                container.innerHTML = cleanHtml;
+
+            if (result) {
+                // Chuẩn hóa chuỗi (loại bỏ codeblock nếu Gemini vẫn cố thêm)
+                let text = result.replace(/```html/gi, '').replace(/```/g, '').trim();
+
+                // Tìm dòng SCORE ở đầu
+                const scoreMatch = text.match(/^\s*SCORE:\s*([0-9]+(?:\.[0-9]+)?)\s*\/\s*10\s*/i);
+                let scoreBadge = '';
+
+                if (scoreMatch) {
+                    const rawScore = parseFloat(scoreMatch[1]);
+                    if (!isNaN(rawScore)) {
+                        const safeScore = Math.max(0, Math.min(10, rawScore));
+                        scoreBadge = `
+                            <div class="mb-6 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-500 text-white px-6 py-4 flex items-center justify-between shadow-lg">
+                                <div>
+                                    <p class="text-xs uppercase tracking-wide opacity-80">Điểm phù hợp hồ sơ</p>
+                                    <p class="text-sm font-medium">Đánh giá tổng quan CV so với vị trí mục tiêu</p>
+                                </div>
+                                <div class="flex items-end gap-2">
+                                    <span class="text-4xl font-extrabold leading-none">${safeScore.toFixed(1)}</span>
+                                    <span class="text-sm font-medium opacity-90 mb-1">/10</span>
+                                </div>
+                            </div>
+                        `;
+
+                        // Bỏ dòng SCORE khỏi nội dung HTML
+                        text = text.replace(/^.*SCORE:.*$/im, '').trim();
+                    }
+                }
+
+                // Phần còn lại coi như HTML tư vấn
+                container.innerHTML = scoreBadge + text;
                 nextBtn.classList.remove('hidden');
             } else {
                 container.innerHTML = `<div class="text-center p-6 bg-red-50 text-red-600 rounded-lg border border-red-200">
                     <p class="font-bold">Lỗi phân tích hoặc thiếu dữ liệu.</p>
-                    <p class="text-sm mt-2">Vui lòng kiểm tra lại kết nối mạng hoặc API Key.</p>
+                    <p class="text-sm mt-2">Vui lòng kiểm tra lại kết nối mạng hoặc API.</p>
                 </div>`;
             }
         };
 
         // 2. CV Gaps Analysis (Step 3 - Tab 1)
-        window.analyzeCvGaps = async () => {
-            const container = document.getElementById('cv-gaps-result');
-            container.classList.remove('hidden');
-            container.innerHTML = '<div class="animate-pulse p-4 bg-slate-100 rounded text-center text-slate-500">Đang soi lỗi hồ sơ...</div>';
-
-            const systemPrompt = `Bạn là Nhà tuyển dụng Y tế khó tính. Hãy tìm ra các lỗ hổng trong hồ sơ ứng viên.
-            Trả về HTML sử dụng Tailwind CSS.
-            
-            Format:
-            <div class="space-y-4">
-                <div class="flex items-start p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
-                    <div class="flex-1">
-                        <h4 class="font-bold text-red-800">1. [Tên Lỗ Hổng]</h4>
-                        <p class="text-sm text-red-700 mt-1">[Giải thích tại sao đây là vấn đề]</p>
-                        <p class="text-xs font-semibold text-red-600 mt-2">💡 Khắc phục: [Lời khuyên ngắn]</p>
-                    </div>
-                </div>
-                </div>`;
-
-            const result = await callGeminiAPI(systemPrompt, `Tìm lỗ hổng cho vị trí ${collectedData.careerPath}. Dữ liệu: ${JSON.stringify(collectedData)}`);
-            if (result) {
-                container.innerHTML = result.replace(/```html/g, '').replace(/```/g, '');
-            } else {
-                container.innerHTML = '<p class="text-red-500">Không thể phân tích. Vui lòng thử lại.</p>';
-            }
-        };
-
-        // 3. Generate Optimized CV (Step 3 - Tab 2)
-        window.generateOptimizedCV = async () => {
-    const container = document.getElementById('optimized-cv-result');
+       window.analyzeCvGaps = async () => {
+    const container = document.getElementById('cv-gaps-result');
     container.classList.remove('hidden');
-    container.innerHTML = '<div class="animate-pulse p-4 bg-slate-100 rounded text-center text-slate-500">Đang viết lại CV chuyên nghiệp...</div>';
+    container.innerHTML = '<div class="animate-pulse p-4 bg-slate-100 rounded text-center text-slate-500">Đang phân tích hồ sơ của bạn...</div>';
 
-    const systemPrompt = `
-Bạn là chuyên gia viết CV ngành Y tế.
+    const systemPrompt = `Bạn là chuyên gia tư vấn nghề nghiệp ngành Y tế. Hãy phân tích CV và đưa ra đánh giá chi tiết:
+    
+1. Điểm mạnh (3-5 điểm)
+2. Điểm yếu cần cải thiện (3-5 điểm)
+3. Đề xuất cụ thể để tối ưu CV
 
-YÊU CẦU BẮT BUỘC:
-- TRẢ VỀ 100% HTML.
-- KHÔNG markdown.
-- KHÔNG dùng codeblock (không có \`\`\`).
-- KHÔNG thêm chú thích, giải thích, mô tả.
-- KHÔNG thay đổi class hoặc thêm bố cục mới bên ngoài template.
-- Chỉ được thay nội dung vào đúng vị trí.
+Yêu cầu:
+- Sử dụng HTML với Tailwind CSS
+- Đánh giá khách quan, chi tiết
+- Đề xuất cụ thể, có thể thực hiện được
+- Tập trung vào yếu tố quan trọng với nhà tuyển dụng
 
-BẮT BUỘC dùng đúng TEMPLATE sau:
-
-<div class="cv-paper">
-    <h2 class="text-2xl font-bold uppercase border-b-2 border-black pb-2 mb-4 text-center">[Tên Ứng Viên]</h2>
-
-    <div class="mb-4">
-        <h3 class="font-bold uppercase text-sm border-b mb-2">Mục tiêu nghề nghiệp</h3>
-        <p class="text-sm text-justify">[Mục tiêu được viết lại rõ ràng, súc tích]</p>
-    </div>
-
-    <div class="mb-4">
-        <h3 class="font-bold uppercase text-sm border-b mb-2">Kinh nghiệm làm việc</h3>
-        <ul class="list-disc ml-5 text-sm space-y-1">
-            <li>[Động từ mạnh] + [Nhiệm vụ] + [Kết quả/ % / số liệu]</li>
+Format trả về:
+<div class="space-y-6">
+    <div>
+        <h3 class="text-lg font-bold text-blue-700 mb-2">📊 ĐIỂM MẠNH</h3>
+        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+            <li><span class="font-medium">[Tên điểm mạnh]:</span> [Mô tả chi tiết]</li>
         </ul>
     </div>
-
-    <div class="mb-4">
-        <h3 class="font-bold uppercase text-sm border-b mb-2">Kỹ năng nổi bật</h3>
-        <p class="text-sm">[Hard Skills / Soft Skills phù hợp vị trí]</p>
+    
+    <div>
+        <h3 class="text-lg font-bold text-orange-600 mb-2">⚠️ ĐIỂM YẾU CẦN CẢI THIỆN</h3>
+        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+            <li><span class="font-medium">[Tên điểm yếu]:</span> [Mô tả chi tiết]</li>
+        </ul>
     </div>
-</div>
+    
+    <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+        <h3 class="text-lg font-bold text-blue-800 mb-2">💡 ĐỀ XUẤT CẢI THIỆN</h3>
+        <div class="space-y-2">
+            <div class="flex items-start">
+                <span class="mr-2">✅</span>
+                <span>[Đề xuất cụ thể và chi tiết]</span>
+            </div>
+        </div>
+    </div>
+</div>`;
 
-Chỉ thay nội dung vào trong template trên.
-KHÔNG thêm văn bản ngoài HTML.
-`;
+    try {
+        const result = await callGeminiAPI(
+            systemPrompt, 
+            `Hãy phân tích CV cho vị trí ${collectedData.careerPath || 'chưa xác định'}. Dữ liệu CV: ${JSON.stringify(collectedData)}`
+        );
+        
+        if (result) {
+            let cleaned = result
+                .replace(/```html/gi, '')
+                .replace(/```/g, '')
+                .trim();
 
-    const result = await callGeminiAPI(
-        systemPrompt, 
-        `Hãy viết lại CV cho hồ sơ sau: ${JSON.stringify(collectedData)}`
-    );
+            if (!/<[a-z][\s\S]*>/i.test(cleaned)) {
+                cleaned = basicMarkdownToHtml(cleaned);
+            }
 
-    if (result) {
-        // CLEAN CHUẨN — KHÔNG PHÁ FORMAT
-        const clean = result
-            .replace(/```html/gi, "")
-            .replace(/```/g, "")
-            .trim();
-
-        container.innerHTML = clean;
-    } else {
-        container.innerHTML = '<p class="text-red-500">Không thể tạo CV. Vui lòng thử lại.</p>';
+            container.innerHTML = cleaned;
+        } else {
+            throw new Error("Không nhận được phản hồi từ hệ thống");
+        }
+    } catch (error) {
+        container.innerHTML = `
+            <div class="bg-red-50 border-l-4 border-red-500 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700">
+                            Có lỗi xảy ra khi phân tích CV. Vui lòng thử lại sau.
+                            <br>
+                            <span class="text-xs opacity-75">Chi tiết: ${error.message}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>`;
     }
 };
 
+window.generateOptimizedCV = async () => {
+    const container = document.getElementById('optimized-cv-result');
+    container.classList.remove('hidden');
+    container.innerHTML = '<div class="animate-pulse p-4 bg-slate-100 rounded text-center text-slate-500">Đang tạo CV chuyên nghiệp...</div>';
+
+    // Step 3: chỉ cần CV đẹp, KHÔNG cần chấm điểm nữa
+    const systemPrompt = `Bạn là Chuyên gia CV ngành Y tế.
+Nhiệm vụ: Viết lại CV của ứng viên cho vị trí ${collectedData.careerPath} theo chuẩn ATS, ngôn ngữ chuyên ngành, tập trung vào THÀNH TỰU và TỪ KHÓA chuyên môn.
+
+QUAN TRỌNG:
+- TRẢ VỀ 100% HTML THUẦN.
+- KHÔNG dùng markdown (không dùng **, *, #, - đầu dòng, v.v.).
+- KHÔNG dùng codeblock (không dùng khối mã nhiều dòng).
+- KHÔNG thêm văn bản giải thích ngoài nội dung CV.
+
+YÊU CẦU HTML:
+- Không chứa thẻ <html>, <body>.
+- Toàn bộ nội dung phải được bọc trong một thẻ gốc:
+  <div class="cv-paper max-w-3xl mx-auto bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-slate-100 space-y-6">
+- Bố cục gợi ý (giữ cấu trúc, thay nội dung cho phù hợp dữ liệu ứng viên):
+
+<div class="cv-paper max-w-3xl mx-auto bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-slate-100 space-y-6">
+  <!-- Header: Tên + chức danh + info ngắn -->
+  <header class="border-b border-slate-200 pb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+    <div>
+      <h1 class="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">[HỌ VÀ TÊN ỨNG VIÊN]</h1>
+      <p class="text-sm font-medium text-indigo-600 mt-1">Điều dưỡng ${collectedData.careerPath || 'lâm sàng'}</p>
+    </div>
+    <div class="text-xs text-slate-600 space-y-1">
+      <p>[Số điện thoại] • [Email]</p>
+      <p>[Địa chỉ]</p>
+    </div>
+  </header>
+
+  <!-- Tóm tắt nghề nghiệp -->
+  <section>
+    <h2 class="text-sm font-semibold text-slate-700 tracking-wide uppercase mb-1">TÓM TẮT NGHỀ NGHIỆP</h2>
+    <p class="text-sm text-slate-700 leading-relaxed">[Đoạn tóm tắt 3-5 câu, nhấn mạnh số năm kinh nghiệm, môi trường làm việc, nhóm đối tượng bệnh nhân và phong cách chăm sóc]</p>
+  </section>
+
+  <!-- Kinh nghiệm làm việc -->
+  <section>
+    <h2 class="text-sm font-semibold text-slate-700 tracking-wide uppercase mb-2">KINH NGHIỆM LÀM VIỆC</h2>
+    <div class="space-y-4">
+      <article class="border-l-2 border-indigo-200 pl-3">
+        <div class="flex justify-between items-baseline gap-2">
+          <h3 class="text-sm font-semibold text-slate-900">[Chức danh điều dưỡng]</h3>
+          <span class="text-xs text-slate-500">[Thời gian làm việc]</span>
+        </div>
+        <p class="text-xs text-slate-600">[Tên bệnh viện / đơn vị]</p>
+        <ul class="mt-1 text-sm text-slate-700 list-disc pl-4 space-y-1">
+          <li>[Động từ mạnh] + [Nhiệm vụ chính] + [Kết quả có số liệu nếu có]</li>
+          <li>...</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- Học vấn -->
+  <section class="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-2 items-baseline">
+    <div>
+      <h2 class="text-sm font-semibold text-slate-700 tracking-wide uppercase mb-1">HỌC VẤN</h2>
+      <p class="text-sm font-semibold text-slate-900">[Tên bằng cấp]</p>
+      <p class="text-xs text-slate-600">[Trường / Cơ sở đào tạo]</p>
+    </div>
+    <div class="text-right text-xs text-slate-500">[Thời gian / Năm tốt nghiệp]</div>
+  </section>
+
+  <!-- Kỹ năng -->
+  <section>
+    <h2 class="text-sm font-semibold text-slate-700 tracking-wide uppercase mb-2">KỸ NĂNG CHÍNH</h2>
+    <div class="flex flex-wrap gap-2">
+      <span class="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs">[Kỹ năng chuyên môn]</span>
+      <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs">[Kỹ năng mềm]</span>
+    </div>
+  </section>
+
+  <!-- Chứng chỉ & Giải thưởng (nếu có) -->
+  <section class="grid md:grid-cols-2 gap-4 text-sm">
+    <div>
+      <h2 class="text-sm font-semibold text-slate-700 tracking-wide uppercase mb-2">CHỨNG CHỈ</h2>
+      <ul class="list-disc pl-4 space-y-1 text-slate-700">
+        <li>[Tên chứng chỉ + Năm]</li>
+      </ul>
+    </div>
+    <div>
+      <h2 class="text-sm font-semibold text-slate-700 tracking-wide uppercase mb-2">GIẢI THƯỞNG & GHI NHẬN</h2>
+      <ul class="list-disc pl-4 space-y-1 text-slate-700">
+        <li>[Danh hiệu/giải thưởng + năm]</li>
+      </ul>
+    </div>
+  </section>
+</div>`;
+
+    try {
+        const result = await callGeminiAPI(systemPrompt, `Viết CV mẫu dựa trên dữ liệu ứng viên sau (JSON): ${JSON.stringify(collectedData)}`);
+
+        if (result) {
+            let cleaned = result
+                .replace(/```html/gi, '')
+                .replace(/```/g, '')
+                .trim();
+
+            if (!/<[a-z][\s\S]*>/i.test(cleaned)) {
+                cleaned = basicMarkdownToHtml(cleaned);
+            }
+
+            container.innerHTML = cleaned;
+        } else {
+            throw new Error("Không nhận được phản hồi từ hệ thống");
+        }
+    } catch (error) {
+        container.innerHTML = `
+            <div class="bg-red-50 border-l-4 border-red-500 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700">
+                            Có lỗi xảy ra khi tạo CV
+                            <br>
+                            <span class="text-xs opacity-75">${error.message}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>`;
+    }
+};
         // 4. Generate Q&A Reference (Step 3 - Tab 3)
         window.generateQnAReference = async () => {
             const container = document.getElementById('qna-reference-result');
@@ -868,21 +1174,37 @@ KHÔNG thêm văn bản ngoài HTML.
             container.innerHTML = '<div class="animate-pulse p-4 bg-slate-100 rounded text-center text-slate-500">Đang tổng hợp bộ câu hỏi phỏng vấn...</div>';
 
             const systemPrompt = `Bạn là Trưởng khoa đang phỏng vấn tuyển dụng vị trí ${collectedData.careerPath}.
-            Hãy đưa ra 3 câu hỏi phỏng vấn hóc búa nhất và gợi ý trả lời thông minh.
-            
-            Format HTML:
-            <div class="space-y-4">
-                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
-                    <p class="font-bold text-slate-800 text-lg mb-2">❓ Câu hỏi 1: [Nội dung câu hỏi]</p>
-                    <div class="bg-emerald-50 p-3 rounded text-sm text-emerald-800">
-                        <strong>💡 Gợi ý trả lời:</strong> [Hướng dẫn trả lời theo mô hình STAR hoặc tập trung vào an toàn người bệnh]
-                    </div>
-                </div>
-                </div>`;
+Hãy đưa ra 3 câu hỏi phỏng vấn hóc búa nhất và gợi ý trả lời thông minh.
+
+QUAN TRỌNG:
+- TRẢ VỀ 100% HTML THUẦN.
+- KHÔNG dùng markdown (không dùng **, *, #, - đầu dòng, v.v.).
+- KHÔNG dùng codeblock.
+- KHÔNG thêm phần giải thích ngoài cấu trúc HTML yêu cầu.
+
+Format HTML:
+<div class="space-y-4">
+  <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+    <p class="font-bold text-slate-800 text-lg mb-2">❓ Câu hỏi 1: [Nội dung câu hỏi]</p>
+    <div class="bg-emerald-50 p-3 rounded text-sm text-emerald-800">
+      <strong>💡 Gợi ý trả lời:</strong> [Hướng dẫn trả lời theo mô hình STAR hoặc tập trung vào an toàn người bệnh]
+    </div>
+  </div>
+  <!-- Lặp lại cho 3 câu hỏi -->
+</div>`;
 
             const result = await callGeminiAPI(systemPrompt, `Tạo câu hỏi phỏng vấn cho hồ sơ: ${JSON.stringify(collectedData)}`);
             if (result) {
-                container.innerHTML = result.replace(/```html/g, '').replace(/```/g, '');
+                let cleaned = result
+                    .replace(/```html/gi, '')
+                    .replace(/```/g, '')
+                    .trim();
+
+                if (!/<[a-z][\s\S]*>/i.test(cleaned)) {
+                    cleaned = basicMarkdownToHtml(cleaned);
+                }
+
+                container.innerHTML = cleaned;
             } else {
                 container.innerHTML = '<p class="text-red-500">Không thể tạo câu hỏi. Vui lòng thử lại.</p>';
             }
