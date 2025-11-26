@@ -43,6 +43,28 @@
             margin-top: 20px;
             opacity: 0.7;
         }
+        .score-metric {
+        transition: all 0.3s ease;
+    }
+    
+    .score-metric:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .progress-bar {
+        transition: width 1s ease-in-out;
+    }
+    
+    .cv-score-pulse {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.03); }
+        100% { transform: scale(1); }
+    }
 
         /* Tab Styling */
         .tab-button {
